@@ -41,8 +41,8 @@ You'll need :
   * python (tested for v >= 3.5);
   * pip (optional);
   * fortran compiler (tested with `gfortran`)
-  * lapack and blas installation, but the useful routines are also shipped with `POLSYS_PLP` source.
-  
+  * lapack and blas installation, but the useful routines are also shipped with `POLSYS_PLP` sources.
+
 If needed, please see the steps given in the continuous integration script [workflows](.github/workflows/ci-ubuntu.yml).
 
 ### Using pip (preferred)
@@ -59,9 +59,16 @@ after cloning the repos.
 
 `pip` will install `numpy` (mandatory) and `sympy` and `scipy` (optional, required only for tests).
 
-Note that on ubuntu, you will need to use `pip3` instead of `pip` and `python3` instead of `python`. 
+Note that on ubuntu, you will need to use `pip3` instead of `pip` and `python3` instead of `python`.
 
-### Troubleshooting 
+On linux, if you want to force the building with `POLSYS_PLP` lapack sources, you can tell it to pip with
+```
+pip install --no-use-pep517 --install-option="--buildLapack" path/to/pypolsys
+```
+The flag `--no-use-pep517` avoids side effect of `install-option` that disable wheels.
+Using `POLSYS_PLP` lapack sources is the standard behavior on windows.
+
+### Troubleshooting
 With old `gfortran` version present on ubuntu 16.04 (see [here](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84276)) the building may failed. To avoid this, `intent(in, out)` statement has to be removed from the original `pypolsys/801/polsys_plp.f90`. It seems to work out of the box with `gfortan-8`.
 
 ### Running tests
@@ -180,8 +187,17 @@ If you want to contribute to `pypolsys`, your are welcomed! Don't hesitate to
   - report bugs, installation problems or ask questions on [issues](https://github.com/nennigb/pypolsys/issues);
   - propose some enhancements in the code or in documentation through **pull requests** (PR);
   
-To ensure code homogeneity among contributors, we use a source-code analyzer (eg. pylint). 
+To ensure code homogeneity among contributors, we use a source-code analyzer (eg. pylint).
 Before submitting a PR, run the tests suite ;-)
+
+## Developpement
+If you need to modify `wrapper.f90` fortran source file. You will need to re-build the Fortran extension. This should be done into 2 steps
+  1. The pyf file that avoid trouble with user_defined fortran type should be updated with `f2py` utilities :
+    ```
+    f2py -m polsys -h polsys.pyf wrapper.f90 --overwrite-signature
+    ```
+  2. Re run the install
+
 
 ## License
 This file is part of pypolsys, a simple python wrapper to fortran package polsys_plp.
