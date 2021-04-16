@@ -77,7 +77,7 @@ def fromSympy(P):
     >>> import sympy as sym
     >>> x, y = sym.symbols('x, y')
     >>> fromSympy([sym.poly(2*x + 3*y - x*y -3, (x,y)),\
-                   sym.poly(3*x**2 + x*y - 1, (x,y))])  # doctest: +NORMALIZE_WHITESPACE
+                   sym.poly(3*x**2 + x*y - 1, (x,y))])  # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
     (2,
     array([4, 3]),
     array([-3.+0.j,  3.+0.j,  2.+0.j, -1.+0.j,
@@ -88,7 +88,7 @@ def fromSympy(P):
            [1, 1],
            [0, 0],
            [1, 1],
-           [2, 0]], dtype=int32))
+           [2, 0]]...))
     """
     # Number of variables
     N = len(P)
@@ -372,14 +372,14 @@ def toDense(N, n_coef_per_eq, all_coef, all_deg, preserve=True):
     >>> import sympy as sym
     >>> x, y = sym.symbols('x y')
     >>> sparse = fromSympy([sym.poly(3j*x**3 + 1, (x))])
-    >>> toDense(*sparse)  # doctest: +NORMALIZE_WHITESPACE
+    >>> toDense(*sparse)  # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
       > 200.0 % more coefs after conversion to dense.
     (1,
     array([4]), array([1.+0.j, 0.+0.j, 0.+0.j, 0.+3.j]),
     array([[0],
           [0],
           [0],
-         [3]], dtype=int32))
+         [3]]...))
     """
     # dmax contains the degree max in all variable for each equation
     dmax = np.zeros((N, N), dtype=np.int)
