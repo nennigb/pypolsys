@@ -1,4 +1,22 @@
 # -*- coding: utf-8 -*-
+
+# This file is part of pypolsys, A python wrapper to `POLSYS_PLP`
+# fortran90 package from Layne T. Watson, Steven M. Wise,
+# Andrew J. Sommese, August, 1998.
+
+# pypolsys is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# pypolsys is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with pypolsys.  If not, see <https://www.gnu.org/licenses/>.
+
 """
 # pypolsys setup.
 
@@ -12,6 +30,7 @@ The behavior can be specified with the install/developp flag `--buildLapack`
 import setuptools
 import platform
 import sys
+import os
 # Usefull to build f90 files
 from numpy.distutils.core import Extension, setup
 # To setup user options
@@ -79,6 +98,17 @@ def ext_wrapper(buildLapack):
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+# Load version
+def version():
+    """ Get version from version.py."""
+    v = None
+    with open(os.path.join('./pypolsys', 'version.py')) as f:
+        for line in f:
+            if line.lstrip().startswith('__version__'):
+                v = line.split('=')[-1].strip().replace("'", "").replace('"', "")
+                break
+        return v
+
 # Check platerform and options
 buildLapack = None
 if '--buildLapack' in sys.argv:
@@ -93,7 +123,7 @@ print('> Building with lapackBuild =', buildLapack)
 # Fill setuptools
 setup(
     name="pypolsys",
-    version="0.1",
+    version=version(),
     author="B. Nennig",
     author_email="benoit.nennig@supmeca.fr",
     description=r"A python wrapper to `POLSYS_PLP` fortran90 package from Layne T. Watson,\
