@@ -1,0 +1,1 @@
+dict(complex = dict(r8="complex_double"), real = dict(r8="double"))

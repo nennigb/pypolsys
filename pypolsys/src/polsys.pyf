@@ -1,0 +1,90 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module polsys ! in 
+    interface  ! in :polsys
+        module polystats ! in :polsys:wrapper.f90
+            integer, allocatable,dimension(:,:) :: vdmax
+            integer, allocatable,dimension(:,:) :: coefsteps
+            subroutine init_steps(deg,steps) ! in :polsys:wrapper.f90:polystats
+                integer dimension(:,:),intent(in) :: deg
+                integer dimension(size(deg,1),size(deg, 2) + 1),intent(out),depend(deg,deg) :: steps
+            end subroutine init_steps
+        end module polystats
+        module polsyswrap ! in :polsys:wrapper.f90
+            use polsys
+            use polystats
+            real(kind=r8), allocatable,dimension(:) :: variables_scale_factors
+            integer :: solve_status
+            complex(kind=r8), allocatable,dimension(:,:) :: myroots
+            integer, allocatable,dimension(:) :: path_status
+            integer, allocatable,dimension(:) :: num_jac_eval
+            subroutine init_poly(n,n_coef_per_eq,all_coef,all_deg) ! in :polsys:wrapper.f90:polsyswrap
+                integer intent(in) :: n
+                integer dimension(:),intent(in) :: n_coef_per_eq
+                complex(kind=8) dimension(:),intent(in) :: all_coef
+                integer dimension(:,:),intent(in) :: all_deg
+            end subroutine init_poly
+            subroutine init_partition(n,num_sets,num_indices,index_bn) ! in :polsys:wrapper.f90:polsyswrap
+                integer intent(in) :: n
+                integer dimension(:),intent(in) :: num_sets
+                integer dimension(:,:),intent(in) :: num_indices
+                integer dimension(:,:,:),intent(in) :: index_bn
+            end subroutine init_partition
+            subroutine show_coef(homo) ! in :polsys:wrapper.f90:polsyswrap
+                logical, optional :: homo
+            end subroutine show_coef
+            subroutine show_partition ! in :polsys:wrapper.f90:polsyswrap
+            end subroutine show_partition
+            subroutine solve(tracktol,finaltol,singtol,dense,bplp) ! in :polsys:wrapper.f90:polsyswrap
+                real(kind=r8) intent(in) :: tracktol
+                real(kind=r8) intent(in) :: finaltol
+                real(kind=r8) intent(inout) :: singtol
+                logical, optional :: dense
+                integer intent(out) :: bplp
+            end subroutine solve
+            subroutine refine(path,tracktol,finaltol,singtol,dense,k) ! in :polsys:wrapper.f90:polsyswrap
+                integer dimension(k),intent(in) :: path
+                real(kind=r8) intent(in) :: tracktol
+                real(kind=r8) intent(in) :: finaltol
+                real(kind=r8) intent(inout) :: singtol
+                logical, optional :: dense
+                integer, optional,intent(in),check(len(path)>=k),depend(path) :: k=len(path)
+            end subroutine refine
+            subroutine bezout(singtol,bplp) ! in :polsys:wrapper.f90:polsyswrap
+                real(kind=r8) intent(inout) :: singtol
+                integer intent(out) :: bplp
+            end subroutine bezout
+            subroutine report(status) ! in :polsys:wrapper.f90:polsyswrap
+                integer intent(out) :: status
+            end subroutine report
+            subroutine cleanup_pol ! in :polsys:wrapper.f90:polsyswrap
+            end subroutine cleanup_pol
+            subroutine cleanup_par ! in :polsys:wrapper.f90:polsyswrap
+            end subroutine cleanup_par
+        end module polsyswrap
+        subroutine dhorner_mv(eq,ncoef,nv,x0,p,dp) ! in :polsys:wrapper.f90
+            use real_precision
+            use polystats
+            use global_plp
+            integer intent(in) :: eq
+            integer intent(in) :: ncoef
+            integer, optional,intent(in),check(len(x0)>=nv),depend(x0) :: nv=len(x0)
+            complex(kind=r8) dimension(nv),intent(in) :: x0
+            complex(kind=r8) intent(out) :: p
+            complex(kind=r8) dimension(nv),intent(out),depend(nv) :: dp
+        end subroutine dhorner_mv
+        subroutine target_system_user(n,proj_coef,xc,f,df) ! in :polsys:wrapper.f90
+            use real_precision
+            use global_plp
+            integer, optional,intent(in),check((len(proj_coef)-1)>=n),depend(proj_coef) :: n=(len(proj_coef)-1)
+            complex(kind=r8) dimension(n + 1),intent(in) :: proj_coef
+            complex(kind=r8) dimension(n + 1),intent(in),depend(n) :: xc
+            complex(kind=r8) dimension(n),intent(out),depend(n) :: f
+            complex(kind=r8) dimension(n,n + 1),intent(out),depend(n,n) :: df
+        end subroutine target_system_user
+    end interface 
+end python module polsys
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

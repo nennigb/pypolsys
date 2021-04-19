@@ -1,0 +1,17 @@
+# Byte-code
+__pycache__/
+*.py[cod]
+*.pdf
+
+# Distribution / packaging
+*.egg-info/
+build/
+*.so
+*-f2pywrappers2.f90
+polsysmodule.c
+
+# pdoc
+html/
+*.html
+*.dot
+
