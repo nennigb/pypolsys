@@ -1,9 +1,8 @@
 PYPOLSYS
 ========
-![CI-Ubuntu](https://github.com/nennigb/pypolsys/workflows/CI-Ubuntu/badge.svg)
+![CI-Ubuntu](https://github.com/nennigb/pypolsys/workflows/CI-Ubuntu/badge.svg) ![CI-Windows](https://github.com/nennigb/pypolsys/workflows/CI-Windows/badge.svg)
 
-This package provides a **minimal** python wrapper to `POLSYS_PLP` fortran90 package from 
-Layne T. Watson, Steven M. Wise, Andrew J. Sommese, August, 1998.
+This package provides a python wrapper to `POLSYS_PLP` fortran90 package from Layne T. Watson, Steven M. Wise, Andrew J. Sommese, August, 1998.
 
 `POLSYS_PLP` is a solver for N complex coefficients polynomial systems of equations in N unknowns by a probability-one, globally convergent homotopy method.
 
@@ -34,15 +33,15 @@ The whole algorithm and its fortran90 implementation is described in
   - `POLSYS_PLP` is based on [`HOMPACK`](https://vtechworks.lib.vt.edu/bitstream/handle/10919/19612/TR-90-36.pdf)
 
 To facilitate the build of this module, a copy of `POLSYS_PLP` *original* sources is included in the `pypolsys/801` folder.
-  
+
 ## Installation
 
-You'll need : 
+You'll need :
   * python (tested for v >= 3.5);
   * pip (optional);
-  * fortran compiler (tested with `gfortran`)
-  * lapack and blas installation, but the useful routines are also shipped with `POLSYS_PLP` source.
-  
+  * fortran compiler (tested with `gfortran` and with `m2w64-toolchain` on windows)
+  * lapack and blas installation, but the useful routines are also shipped with `POLSYS_PLP` sources.
+
 If needed, please see the steps given in the continuous integration script [workflows](.github/workflows/ci-ubuntu.yml).
 
 ### Using pip (preferred)
@@ -59,9 +58,16 @@ after cloning the repos.
 
 `pip` will install `numpy` (mandatory) and `sympy` and `scipy` (optional, required only for tests).
 
-Note that on ubuntu, you will need to use `pip3` instead of `pip` and `python3` instead of `python`. 
+Note that on ubuntu, you will need to use `pip3` instead of `pip` and `python3` instead of `python`.
 
-### Troubleshooting 
+On linux, if you want to force the building with `POLSYS_PLP` lapack sources, you can tell it to pip with
+```
+pip install --no-use-pep517 --install-option="--buildLapack" path/to/pypolsys
+```
+The flag `--no-use-pep517` avoids side effect of `install-option` that disable wheels.
+Using `POLSYS_PLP` lapack sources is the standard behavior on windows.
+
+### Troubleshooting
 With old `gfortran` version present on ubuntu 16.04 (see [here](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84276)) the building may failed. To avoid this, `intent(in, out)` statement has to be removed from the original `pypolsys/801/polsys_plp.f90`. It seems to work out of the box with `gfortan-8`.
 
 ### Running tests
@@ -179,9 +185,20 @@ This project started because we need some easy to deploy Homotopy solver. We are
 If you want to contribute to `pypolsys`, your are welcomed! Don't hesitate to
   - report bugs, installation problems or ask questions on [issues](https://github.com/nennigb/pypolsys/issues);
   - propose some enhancements in the code or in documentation through **pull requests** (PR);
-  
-To ensure code homogeneity among contributors, we use a source-code analyzer (eg. pylint). 
+  - add or enhance support to other plateforms
+
+To ensure code homogeneity among contributors, we use a source-code analyzer (eg. pylint).
 Before submitting a PR, run the tests suite ;-)
+
+## Developpement
+If you need to modify `wrapper.f90` fortran source file. You will need to re-build the Fortran extension. This should be done into 2 steps
+  1. The pyf file that avoid trouble with user_defined fortran type should be updated with `f2py` utilities :
+
+    ```
+    f2py -m polsys -h polsys.pyf wrapper.f90 --overwrite-signature
+    ```
+  2. Re run the install
+
 
 ## License
 This file is part of pypolsys, a simple python wrapper to fortran package polsys_plp.

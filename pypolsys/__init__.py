@@ -21,3 +21,4 @@
 from . import utils
 # not usefull to map all fortran modules
 from .polsys import polsyswrap as polsys
+from .version import __version__
