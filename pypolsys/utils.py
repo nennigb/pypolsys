@@ -40,7 +40,7 @@ and the references therein.
 """
 
 import numpy as np
-
+from pypolsys import polsys
 
 def fromSympy(P):
     """ Create polsys polynomial from sympy list of Poly. All variables
@@ -159,13 +159,13 @@ def from1Darray(P):
     --------
     Consider the following example
         ```
-        x**2 - 3*x + 3 = 0
+        x**2 - 3*x + 2 = 0
         ```
     With 2 solutions in C : {2, 1}
-    >>> from1Darray([3., -3., 1.])  # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    >>> from1Darray([2., -3., 1.])  # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
     (1,
      array([3]...),
-     array([ 3.+0.j, -3.+0.j,  1.+0.j]),
+     array([ 2.+0.j, -3.+0.j,  1.+0.j]),
      array([[0],
             [1],
             [2]]...)
@@ -174,6 +174,66 @@ def from1Darray(P):
     N = len(P)
     return (1, np.array([N], dtype=np.int32), np.array(P, dtype=complex),
             np.arange(0, N, dtype=np.int32).reshape(-1, 1))
+
+
+def solve_univar(P, tracktol=1e-10, finaltol=1e-12, singtol=1e-14, dense=False):
+    """ Solve univariate polynomial ordered by ascending power order.
+
+    This function is a short hand to solve univariate case where the calling
+    sequence can be simplified.
+
+    Parameters
+    ----------
+    P : iterable
+        Coefficient of the polynomial ordered by ascending order.
+    tracktol : float
+        is the local error tolerance allowed the path tracker along
+        the path.
+    finaltol : float
+        is the accuracy desired for the final solution.  It is used
+        for both the absolute and relative errors in a mixed error criterion.
+   singtol : float
+       is the singularity test threshold used by `SINGSYS_PLP`.  If
+       `singtol <= 0.0` on input, then `singtol` is reset to a default value.
+    dense : bool
+       if `True`, select the `TARGET_SYSTEM_USER` optimized for dense polynomial
+       (horner). If `False` (default) the defaut `POLSYS_PLP TARGET_SYSTEM` is
+       used. The default choice is safer.
+
+    Returns
+    -------
+    roots : array
+        are the complex roots of the polynomial.
+
+    Remarks
+    --------
+    For convenience the homogeneous variable due to the complex projective space
+    are not return with this simplified interface.
+
+    Examples
+    --------
+    Consider the following example
+    ```
+    x**2 - 3*x + 2 = 0
+    ```
+    With 2 solutions in C : {2, 1}
+    >>> roots = solve_univar([2., -3., 1.])  # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    >>> np.sort(roots.real)
+    array([1., 2.])
+    """
+    out4polsys = from1Darray(P)
+    # Pass it to POLSYS_PLP
+    polsys.init_poly(*out4polsys)
+    # Create homogeneous partition
+    part = make_h_part(1)
+    # Pass it to POLSYS_PLP
+    polsys.init_partition(*part)
+    # Solve
+    bplp = polsys.solve(tracktol, finaltol, singtol, dense)
+    # Get the roots, array of size (N+1) x bplp
+    roots = polsys.myroots
+    return roots[0, :]
+
 
 
 def di(all_deg, n_coef_per_eq):
