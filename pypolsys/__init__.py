@@ -21,4 +21,5 @@
 # not usefull to map all fortran modules
 from .polsys import polsyswrap as polsys
 from . import utils
+from .utils import solve_univar
 from .version import __version__
