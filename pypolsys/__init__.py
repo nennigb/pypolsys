@@ -18,7 +18,8 @@
 # along with pypolsys.  If not, see <https://www.gnu.org/licenses/>.
 
 
-from . import utils
 # not usefull to map all fortran modules
 from .polsys import polsyswrap as polsys
+from . import utils
+from .utils import solve_univar
 from .version import __version__

@@ -40,6 +40,7 @@ and the references therein.
 """
 
 import numpy as np
+from pypolsys import polsys
 
 def fromSympy(P):
     """ Create polsys polynomial from sympy list of Poly. All variables
@@ -79,7 +80,7 @@ def fromSympy(P):
     >>> fromSympy([sym.poly(2*x + 3*y - x*y -3, (x,y)),\
                    sym.poly(3*x**2 + x*y - 1, (x,y))])  # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
     (2,
-    array([4, 3]),
+    array([4, 3]...),
     array([-3.+0.j,  3.+0.j,  2.+0.j, -1.+0.j,
            -1.+0.j,  1.+0.j,  3.+0.j]),
     array([[0, 0],
@@ -100,7 +101,7 @@ def fromSympy(P):
     deg_list = []
 
     # Conversion
-    n_coef_per_eq = np.zeros((N,), dtype=np.integer)
+    n_coef_per_eq = np.zeros((N,), dtype=np.int32)
     for n, p in enumerate(P):
         pd = p.as_dict()
         k = 0
@@ -113,14 +114,126 @@ def fromSympy(P):
         # store the number of terms for this polynomial
         n_coef_per_eq[n] = k
         # convert to array
-        coef_arr_n = np.array(coef_list_n, dtype=np.complex)
-        deg_arr_n =  np.array(deg_list_n, dtype=np.int32)
+        coef_arr_n = np.array(coef_list_n, dtype=complex)
+        deg_arr_n = np.array(deg_list_n, dtype=np.int32)
         # Sort Them
         index = np.lexsort(np.fliplr(deg_arr_n).T)
         deg_list.append(deg_arr_n[index, :].copy())
         coef_list.append(coef_arr_n[index].copy())
 
     return N, n_coef_per_eq, np.hstack(coef_list), np.vstack(deg_list)
+
+
+def from1Darray(P):
+    """ Create polsys polynomial from 1D array corresponding to a univariate
+    polynomial. The first term is the constant; assume dense representation.
+
+    Parameters
+    ----------
+    P : iterable
+        Coefficient of the polynomial ordered by ascending order.
+
+    Returns
+    -------
+    N : int
+        The number of variables and equations
+    n_coef_per_eq : array
+        The number of terms in each polynomial equation. Sum(n_coef_per_eq) give the
+        total number of coefficeint
+    all_coef : array
+        Contains succesivelly all the coefficients of each monimial for each equation,
+        starting by the first one.
+    all_deg : array
+        Contains succesivelly all the degrees of each monimial for each equation,
+        starting by the first one.
+        This is an array such the line number is the terms number and the column contain
+        contains the degree of each variable.
+        ex : if ther 4th term is (3.12+2j) x1^2 x2^3 x3^0, this yields
+        all_deg(4, :) = [2, 3, 0] and all_coef(4) = 3.12+2j
+
+    Remarks
+    -------
+    Use as a tuple, the output can be directly pass to `init_poly`.
+
+    Examples
+    --------
+    Consider the following example
+        ```
+        x**2 - 3*x + 2 = 0
+        ```
+    With 2 solutions in C : {2, 1}
+    >>> from1Darray([2., -3., 1.])  # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    (1,
+     array([3]...),
+     array([ 2.+0.j, -3.+0.j,  1.+0.j]),
+     array([[0],
+            [1],
+            [2]]...)
+    """
+    # Number of variables
+    N = len(P)
+    return (1, np.array([N], dtype=np.int32), np.array(P, dtype=complex),
+            np.arange(0, N, dtype=np.int32).reshape(-1, 1))
+
+
+def solve_univar(P, tracktol=1e-10, finaltol=1e-12, singtol=1e-14, dense=False):
+    """ Solve univariate polynomial ordered by ascending power order.
+
+    This function is a short hand to solve univariate case where the calling
+    sequence can be simplified.
+
+    Parameters
+    ----------
+    P : iterable
+        Coefficient of the polynomial ordered by ascending order.
+    tracktol : float
+        is the local error tolerance allowed the path tracker along
+        the path.
+    finaltol : float
+        is the accuracy desired for the final solution.  It is used
+        for both the absolute and relative errors in a mixed error criterion.
+   singtol : float
+       is the singularity test threshold used by `SINGSYS_PLP`.  If
+       `singtol <= 0.0` on input, then `singtol` is reset to a default value.
+    dense : bool
+       if `True`, select the `TARGET_SYSTEM_USER` optimized for dense polynomial
+       (horner). If `False` (default) the defaut `POLSYS_PLP TARGET_SYSTEM` is
+       used. The default choice is safer.
+
+    Returns
+    -------
+    roots : array
+        are the complex roots of the polynomial.
+
+    Remarks
+    --------
+    For convenience the homogeneous variable due to the complex projective space
+    are not return with this simplified interface.
+
+    Examples
+    --------
+    Consider the following example
+    ```
+    x**2 - 3*x + 2 = 0
+    ```
+    With 2 solutions in C : {2, 1}
+    >>> roots = solve_univar([2., -3., 1.])  # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+    >>> np.sort(roots.real)
+    array([1., 2.])
+    """
+    out4polsys = from1Darray(P)
+    # Pass it to POLSYS_PLP
+    polsys.init_poly(*out4polsys)
+    # Create homogeneous partition
+    part = make_h_part(1)
+    # Pass it to POLSYS_PLP
+    polsys.init_partition(*part)
+    # Solve
+    bplp = polsys.solve(tracktol, finaltol, singtol, dense)
+    # Get the roots, array of size (N+1) x bplp
+    roots = polsys.myroots
+    return roots[0, :]
+
 
 
 def di(all_deg, n_coef_per_eq):
@@ -227,6 +340,7 @@ def make_mh_part(N, var_list):
         mindex[0, i, 0:num_indice[i]] = np.array(part)
     index = np.repeat(mindex, N, axis=0)
     return N, num_set, num_indices, index
+
 
 def make_h_part(N):
     """ Create `POLSYS_PLP` arguments for homogeneous partition.
@@ -375,14 +489,14 @@ def toDense(N, n_coef_per_eq, all_coef, all_deg, preserve=True):
     >>> toDense(*sparse)  # doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
       > 200.0 % more coefs after conversion to dense.
     (1,
-    array([4]), array([1.+0.j, 0.+0.j, 0.+0.j, 0.+3.j]),
+    array([4]...), array([1.+0.j, 0.+0.j, 0.+0.j, 0.+3.j]),
     array([[0],
           [0],
           [0],
          [3]]...))
     """
     # dmax contains the degree max in all variable for each equation
-    dmax = np.zeros((N, N), dtype=np.int)
+    dmax = np.zeros((N, N), dtype=np.int32)
 
     # setup new coefs matrix
     deg_list = []
@@ -396,14 +510,14 @@ def toDense(N, n_coef_per_eq, all_coef, all_deg, preserve=True):
         deg_n = all_deg[start:(start+Nn)]
         dmax[n, :] = np.max(deg_n, axis=0)
         # store ite
-        deg_mat = np.zeros(dmax[n, :] + 1, dtype=np.complex)
+        deg_mat = np.zeros(dmax[n, :] + 1, dtype=complex)
 
         for coef, deg in zip(all_coef[start:(start+Nn)], deg_n):
             deg_mat[tuple(deg)] = coef
         c.append(deg_mat)
         # extract the indices and value
         deg_i = np.zeros((deg_mat.size, N), dtype=np.int32)
-        coef_i = np.zeros((deg_mat.size,), dtype=np.complex)
+        coef_i = np.zeros((deg_mat.size,), dtype=complex)
         n_coef_per_eq_[n] = deg_mat.size
         k = 0
         for index, val in np.ndenumerate(deg_mat):
@@ -423,7 +537,6 @@ def toDense(N, n_coef_per_eq, all_coef, all_deg, preserve=True):
                                                          / np.sum(n_coef_per_eq)
                                                          * 100.))
     return N, n_coef_per_eq_, np.hstack(coef_list), np.vstack(deg_list)
-
 
 
 # if __name__ == '__main__':

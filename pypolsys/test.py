@@ -49,7 +49,7 @@ def sort_ref_found(ref, r):
     # all combinations
     Nroots = r.shape[1]
     Nref = ref.shape[1]
-    Cost = np.zeros((Nroots, Nref), dtype=np.float)
+    Cost = np.zeros((Nroots, Nref), dtype=float)
     for index, c in np.ndenumerate(Cost):
         Cost[index] = np.linalg.norm(ref[:, index[1]] - r[0:-1, index[0]])
     row_ind, col_ind = linear_sum_assignment(Cost)
@@ -73,7 +73,7 @@ class TestBasic(unittest.TestCase):
         n_coef_per_eq = np.array([6, 6], dtype=np.int32)
         all_coef = np.array([-9.80e-04, 9.78e+05, -9.80e+00, -2.35e+02, 8.89e+04, -1.00e+00,
                              -1.00e-02, -9.84e-01, -2.97e+01, 9.87e-03, -1.24e-01, -2.50e-01],
-                            dtype=np.complex)
+                            dtype=complex)
         all_deg = np.zeros((np.sum(n_coef_per_eq), N), dtype=np.int32)
         all_deg[0, 0] = 2
         all_deg[1, 1] = 2
@@ -130,7 +130,7 @@ class TestBasic(unittest.TestCase):
         # The coefficients are provided as 1D array
         all_coef = np.array([1, 1,  1, -1,
                              1, 1,  1, -1,
-                             1, 1,  1, -1], dtype=np.complex)
+                             1, 1,  1, -1], dtype=complex)
         # Degree of each monom
         all_deg = np.zeros((np.sum(n_coef_per_eq), N), dtype=np.int32)
         all_deg[0, 0] = 2
@@ -226,7 +226,7 @@ class TestBasic(unittest.TestCase):
 
         Consider the following example
         ```
-        x**2 - 3*x + 3 = 0
+        x**2 - 3*x + 2 = 0
         ```
         With 2 solutions in C : (2) (1)
         """
@@ -247,7 +247,7 @@ class TestBasic(unittest.TestCase):
         # Get the roots, array of size (N+1) x bplp
         r = pypolsys.polsys.myroots
         # Create References solution
-        ref = np.array([1., 2.], dtype=np.complex)
+        ref = np.array([1., 2.], dtype=complex)
         # Need to sort both solutions in the same way
         err = np.linalg.norm(ref - np.sort(r[0, :]))
         self.assertTrue(err < tol)
