@@ -40,13 +40,16 @@ You'll need :
   * python (tested for v >= 3.5);
   * pip (optional);
   * fortran compiler (tested with `gfortran` and with `m2w64-toolchain` on windows)
-  * lapack and blas installation, but the useful routines are also shipped with `POLSYS_PLP` sources.
+  * lapack and blas installation, but the useful routines are also shipped with `POLSYS_PLP` sources. On debian based distribution it can be done with `sudo apt install libopenblas-dev`.
 
 If needed, please see the steps given in the continuous integration script [workflows](.github/workflows/ci-ubuntu.yml).
 
 ### Using pip (preferred)
-
-You can install `pypolsys` from github:
+You can install `pypolsys` from pip:
+```
+pip install pypolsys [--user]
+```
+You can also install `pypolsys` after a download from github:
 ```
 pip install path/to/pypolsys-version.tar.gz [--user]
 ```
