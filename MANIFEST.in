@@ -6,7 +6,6 @@ include pypolsys/801/*.DAT
 include pypolsys/src/wrapper.f90
 include pypolsys/src/polsys.pyf
 include pypolsys/examples/data/toy_model.npz
+include .f2py_f2cmap
 include pyproject.toml
-
-
 
