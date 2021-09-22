@@ -37,6 +37,7 @@ from numpy.distutils.core import Extension, setup
 from setuptools.command.install import install
 from setuptools.command.develop import develop
 
+
 class UserOptionCommand(object):
     """ Mixin class to add user option support.
 
@@ -94,9 +95,11 @@ def ext_wrapper(buildLapack):
                                          '-funroll-loops'],  # "-fopenmp"
                      extra_link_args=extra_link_args)         # "-lgomp")
 
+
 # Load README
 with open("README.md", "r") as fh:
     long_description = fh.read()
+
 
 # Load version
 def version():
@@ -108,6 +111,7 @@ def version():
                 v = line.split('=')[-1].strip().replace("'", "").replace('"', "")
                 break
         return v
+
 
 # Check platerform and options
 buildLapack = None
@@ -134,12 +138,13 @@ setup(
     # Use find_packages() to automatically discover all packages and subpackages
     packages=setuptools.find_packages(),
     include_package_data=True,
+    package_data={'pypolsys': ['examples/data/*.npz']},
     # build f90 module
     ext_modules=[ext_wrapper(buildLapack)],
-    install_requires=['numpy', 'scipy', 'sympy'],
+    install_requires=['numpy', 'scipy', 'sympy', 'setuptools'],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GPL 3",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent"],
     # tested with python 3.5 may works with previous py3 version...
     python_requires='>=3.5',
