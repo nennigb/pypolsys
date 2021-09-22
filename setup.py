@@ -129,7 +129,7 @@ setup(
     name="pypolsys",
     version=version(),
     author="B. Nennig",
-    author_email="benoit.nennig@supmeca.fr",
+    author_email="benoit.nennig@isae-supmeca.fr",
     description=r"A python wrapper to `POLSYS_PLP` fortran90 package from Layne T. Watson,\
     Steven M. Wise, Andrew J. Sommese, August, 1998.",
     long_description=long_description,
