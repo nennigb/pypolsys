@@ -1,6 +1,6 @@
 PYPOLSYS
 ========
-![CI-Ubuntu](https://github.com/nennigb/pypolsys/workflows/CI-Ubuntu/badge.svg) ![CI-Windows](https://github.com/nennigb/pypolsys/workflows/CI-Windows/badge.svg)
+[![pypi release](https://img.shields.io/pypi/v/pypolsys.svg)](https://pypi.org/project/pypolsys/) ![CI-Ubuntu](https://github.com/nennigb/pypolsys/workflows/CI-Ubuntu/badge.svg) ![CI-Windows](https://github.com/nennigb/pypolsys/workflows/CI-Windows/badge.svg)
 
 This package provides a python wrapper to `POLSYS_PLP` fortran90 package from Layne T. Watson, Steven M. Wise, Andrew J. Sommese, August, 1998.
 
