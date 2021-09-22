@@ -40,7 +40,7 @@ You'll need :
   * python (tested for v >= 3.5);
   * pip (optional);
   * fortran compiler (tested with `gfortran` and with `m2w64-toolchain` on windows)
-  * lapack and blas installation, but the useful routines are also shipped with `POLSYS_PLP` sources. On debian based distribution it can be done with `sudo apt install libopenblas-dev`.
+  * lapack and blas installation (only on linux), but the useful routines are also shipped with `POLSYS_PLP` sources and used for windows build. Such optimized library are often already present on linux systems. If not, for instance the library `openblas` and the required development files can be installed with `sudo apt install libopenblas-dev` on debian based distribution (including ubuntu). On linux, the flag `--buildLapack` force lapack build (see below).
 
 If needed, please see the steps given in the continuous integration script [workflows](.github/workflows/ci-ubuntu.yml).
 
