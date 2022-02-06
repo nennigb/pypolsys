@@ -654,7 +654,7 @@ do i=1, size(path_status)
         print*, '   The normal flow Newton iteration in STEPNX or ROOT_PLP failed'
         print*, '    to converge.  The error error tolerances TRACKTOL or FINALTOL may'
         print*, '    be too stringent.'
-      case (-7) 
+      case (7) 
         print*, '   ROOT_PLP failed to find a root in 10*NUMRR iterations.'    
     end select
   end if
