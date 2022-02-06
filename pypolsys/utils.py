@@ -19,7 +19,7 @@
 
 """
 Define some utility functions to pass *easily* polynomials and variables
-partitions to `PPLSYS_PLP`.
+partitions to `POLSYS_PLP`.
 
 Changing the partition has a strong impact on the number of paths to track
 in the homotopy. `PPLSYS_PLP` supports
