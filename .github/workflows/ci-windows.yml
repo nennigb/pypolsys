@@ -27,10 +27,14 @@ jobs:
       - shell: bash -l {0}
         run: |
           conda install m2w64-toolchain libpython
+          # numpy is required for pypolsys building. Better to install it with conda.
+          # Sometime it fails when installed by pip thought `build-system` requirement from `pyproject.toml` 
+          conda install numpy setuptools wheel
       - name: Build
         shell: bash -l {0}
         run: |
-            python -m pip install -e .
+            # Ignore `pyproject.toml` to avoid conda/pip mix in numpy version
+            python -m pip install -e . --no-use-pep517
       - name: Test
         shell: bash -l {0}
         run: |
