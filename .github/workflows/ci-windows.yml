@@ -26,6 +26,8 @@ jobs:
           add-pip-as-python-dependency: true
       - shell: bash -l {0}
         run: |
+          # Use conda to manage the building toolchain, but is now outdated
+          # https://numpy.org/doc/stable/f2py/windows/index.html
           conda install m2w64-toolchain libpython
           # numpy is required for pypolsys building. Better to install it with conda.
           # Sometime it fails when installed by pip thought `build-system` requirement from `pyproject.toml` 
