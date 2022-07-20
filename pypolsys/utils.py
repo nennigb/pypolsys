@@ -22,12 +22,12 @@ Define some utility functions to pass *easily* polynomials and variables
 partitions to `POLSYS_PLP`.
 
 Changing the partition has a strong impact on the number of paths to track
-in the homotopy. `PPLSYS_PLP` supports
+in the homotopy. `POLSYS_PLP` supports
   * 1-homogeneous, denoted by h,
   * m-homogeneous, denoted by mh,
   * partitioned linear product, denoted by plp.
 
-For more details on `PPLSYS_PLP` partition, See
+For more details on `POLSYS_PLP` partition, See
 > Wise, Steven M., Andrew J. Sommese, and Layne T. Watson. "Algorithm 801:
 > POLSYS_PLP: A partitioned linear product homotopy code for solving polynomial
 > systems of equations." ACM Transactions on Mathematical Software (TOMS)
@@ -35,16 +35,18 @@ For more details on `PPLSYS_PLP` partition, See
 
 For discussion on partitions and polynomials system types (dense, sparse, determinental), see
 > Verschelde, Jan. "Polynomial homotopies for dense, sparse and determinantal
-> systems." arXiv preprint math/9907060 (1999).
+> systems", _arXiv preprint math/9907060_ (1999).
 and the references therein.
 """
 
 import numpy as np
 from pypolsys import polsys
 
+
 def fromSympy(P):
-    """ Create polsys polynomial from sympy list of Poly. All variables
-    should be present in the generator.
+    """Instantiated polsys polynomial from sympy list of Poly.
+
+    All variables should be present in the generator.
 
     Parameters
     ----------
@@ -125,8 +127,9 @@ def fromSympy(P):
 
 
 def from1Darray(P):
-    """ Create polsys polynomial from 1D array corresponding to a univariate
-    polynomial. The first term is the constant; assume dense representation.
+    """Instantiated polsys polynomial from 1D array corresponding to a univariate polynomial.
+
+    The first term is the constant; assume dense representation.
 
     Parameters
     ----------
@@ -177,7 +180,7 @@ def from1Darray(P):
 
 
 def solve_univar(P, tracktol=1e-10, finaltol=1e-12, singtol=1e-14, dense=False):
-    """ Solve univariate polynomial ordered by ascending power order.
+    """Solve univariate polynomial ordered by ascending power order.
 
     This function is a short hand to solve univariate case where the calling
     sequence can be simplified.
@@ -186,24 +189,24 @@ def solve_univar(P, tracktol=1e-10, finaltol=1e-12, singtol=1e-14, dense=False):
     ----------
     P : iterable
         Coefficient of the polynomial ordered by ascending order.
-    tracktol : float
+        tracktol : float
         is the local error tolerance allowed the path tracker along
         the path.
     finaltol : float
         is the accuracy desired for the final solution.  It is used
         for both the absolute and relative errors in a mixed error criterion.
-   singtol : float
-       is the singularity test threshold used by `SINGSYS_PLP`.  If
-       `singtol <= 0.0` on input, then `singtol` is reset to a default value.
+    singtol : float
+        is the singularity test threshold used by `SINGSYS_PLP`.  If
+        `singtol <= 0.0` on input, then `singtol` is reset to a default value.
     dense : bool
-       if `True`, select the `TARGET_SYSTEM_USER` optimized for dense polynomial
-       (horner). If `False` (default) the defaut `POLSYS_PLP TARGET_SYSTEM` is
-       used. The default choice is safer.
+        if `True`, select the `TARGET_SYSTEM_USER` optimized for dense polynomial
+        (horner). If `False` (default) the defaut `POLSYS_PLP TARGET_SYSTEM` is
+        used. The default choice is safer.
 
     Returns
     -------
     roots : array
-        are the complex roots of the polynomial.
+        The complex roots of the polynomial.
 
     Remarks
     --------
@@ -237,7 +240,7 @@ def solve_univar(P, tracktol=1e-10, finaltol=1e-12, singtol=1e-14, dense=False):
 
 
 def di(all_deg, n_coef_per_eq):
-    """ Return the degree of each equation and the total degree.
+    """Return the degree of each equation and the total degree.
 
     This quantities are usefull to estimate the number of isolated solution
     of the polynomial system [Bezout Theorem].
@@ -281,7 +284,7 @@ def di(all_deg, n_coef_per_eq):
 
 
 def make_mh_part(N, var_list):
-    """ Create `POLSYS_PLP` arguments for m-homogeneous partition.
+    """Create `POLSYS_PLP` arguments for m-homogeneous partition.
 
     Multi-homogeneous or m-homogeneous partition allow to group unknwons into sets,
     The partition will be the same for all equations.
@@ -302,7 +305,7 @@ def make_mh_part(N, var_list):
     N : int
         The number of variable and equations.
     num_set :  array(N)
-       The number of set for each polynomial equation.
+        The number of set for each polynomial equation.
     num_indices : array(N,  NUM_SETS)
         Contains the 'list' of all the coefficients, sorting such poly1 coef, poly2 coef...
     index : array (N, NUM_SETS, NUM_INDICES)
@@ -343,7 +346,7 @@ def make_mh_part(N, var_list):
 
 
 def make_h_part(N):
-    """ Create `POLSYS_PLP` arguments for homogeneous partition.
+    """Create `POLSYS_PLP` arguments for homogeneous partition.
 
     The partition will contain all variables, this equivalent to a 1-homogeneous
     partition. With this partition, the number of tracked paths will correspond to
@@ -359,7 +362,7 @@ def make_h_part(N):
     N : int
         The number of variable and equations.
     num_set :  array(N)
-       The number of set for each polynomial equation.
+        The number of set for each polynomial equation.
     num_indices : array(N,  NUM_SETS)
         Contains the 'list' of all the coefficients, sorting such poly1 coef, poly2 coef...
     index : array (N, NUM_SETS, NUM_INDICES)
@@ -373,9 +376,9 @@ def make_h_part(N):
 
 
 def make_plp_part(N, var_list):
-    """ Create `POLSYS_PLP` arguments for plp-homogeneous partition.
+    """Create `POLSYS_PLP` arguments for plp-homogeneous partition.
 
-    Compared to m-homogeneous partition, plp partition allow to change
+    Compared to m-homogeneous partition, plp partition allows to change
     the partition for each equation. With this partition, the number of
     tracked paths will correspond to Bézout PLP number.
 
@@ -396,7 +399,7 @@ def make_plp_part(N, var_list):
     N : int
         The number of variable and equations.
     num_set :  array(N)
-       The number of set for each polynomial equation.
+        The number of set for each polynomial equation.
     num_indices : array(N,  NUM_SETS)
         Contains the 'list' of all the coefficients, sorting such poly1 coef, poly2 coef...
     index : array (N, NUM_SETS, NUM_INDICES)
@@ -425,7 +428,7 @@ def make_plp_part(N, var_list):
 
 
 def toDense(N, n_coef_per_eq, all_coef, all_deg, preserve=True):
-    """ Convert a *sparse* list of mononials suitable for `POLSYS_PLP`
+    """Convert a *sparse* list of mononials suitable for `POLSYS_PLP`
     into a list of ordered monimials of a dense polynomials.
 
     Such preprocessing is **mandatory to use multiple variable Horner scheme**,
