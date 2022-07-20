@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # This file is part of pypolsys, A python wrapper to `POLSYS_PLP`
 # fortran90 package from Layne T. Watson, Steven M. Wise,
 # Andrew J. Sommese, August, 1998.
@@ -17,8 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with pypolsys.  If not, see <https://www.gnu.org/licenses/>.
 
+r"""
+pypolsys -- A python wrapper to `POLSYS_PLP` fortran90 homotopy solver
+======================================================================
+.. include::../README.md
+    :start-line:4
+    :raw:
+"""
 
-# On windows (gfortran+msvc) the fortran dll are put in a `.libs` folder 
+# On windows (gfortran+msvc) the fortran dll are put in a `.libs` folder
 # by numpy.distutils and need to be in the path before import
 # see https://pav.iki.fi/blog/2017-10-08/pywingfortran.html#building-python-wheels-with-fortran-for-windows
 
@@ -40,4 +46,3 @@ from .polsys import polsyswrap as polsys
 from . import utils
 from .utils import solve_univar
 from .version import __version__
-
