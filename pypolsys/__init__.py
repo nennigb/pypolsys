@@ -46,3 +46,9 @@ from .polsys import polsyswrap as polsys
 from . import utils
 from .utils import solve_univar
 from .version import __version__
+
+# Patch the docstring of the fortran module `polsyswrap` instead of the
+# `polsys.xxx.so` file for pdoc3
+# Rendering of f2py docstring is not perfect, but better than nothing.
+__pdoc__ = {}
+__pdoc__['polsys'] = polsys.__doc__
