@@ -178,6 +178,13 @@ This python package is divided into two parts
       * `num_jac_eval`, containing the number of evaluation of the Jacobian matrix.
   - `pypolsys.utils` contains utilities to facilitate the creation of the partition, polynomial or the estimation of the number of path (full python).
 
+## View documentation
+The doctrings are compatible with several Auto-generate API documentation, like `pdoc3`. Once the package has been installed or the at `pypolsys` location run,
+```
+pdoc3 --html --force --config latex_math=True pypolsys
+```
+The html files are generated in place. Then open the `pypolsys/index.html` file. This interactive doc is particularly useful to see latex includes.
+
 ## Limitation
 Due to shared variables in modules, only one polynomial instance can be handled. Concurrent calls to the `.so` file may create unexpected behavior.
 To solve several polynomials, you can use `concurrent.futures`.
