@@ -736,8 +736,12 @@ DO
       CRASH = .FALSE.
   
       ! Track the homotopy path.
-  
-      TRACKER: DO ITER=1,LIMIT
+
+      ! Change `DO` loop into `DO WHILE` to avoid trouble with gfortran version > 9.4 with manual modification
+      ! of `ITER` in `ROOT_PLP` at loop exit.
+      ITER = 0
+      TRACKER: DO WHILE (ITER < LIMIT)
+        ITER = ITER + 1
         IF (Y(1) < 0.0_R8) THEN
           IFLAG = 5
           EXIT TRACKER
