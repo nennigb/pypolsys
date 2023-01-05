@@ -37,6 +37,8 @@ jobs:
         run: |
             # Ignore `pyproject.toml` to avoid conda/pip mix in numpy version
             python -m pip install -e . --no-use-pep517
+            # Show f2py compiler info for debug
+            f2py -c --help-fcompiler            
       - name: Test
         shell: bash -l {0}
         run: |
