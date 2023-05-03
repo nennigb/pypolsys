@@ -36,6 +36,8 @@ from numpy.distutils.core import Extension, setup
 # To setup user options
 from setuptools.command.install import install
 from setuptools.command.develop import develop
+# Use standard lib distutils for sdist (see numpy issues 7127)
+from distutils.command.sdist import sdist
 
 
 class UserOptionCommand(object):
@@ -152,5 +154,6 @@ setup(
     cmdclass={
         'install': InstallCommand,
         'develop': DevelopCommand,
+        'sdist': sdist,
         }
 )
