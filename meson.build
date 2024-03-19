@@ -35,6 +35,10 @@ inc_np = include_directories(incdir_numpy, incdir_f2py)
 #            blah-f2pywrappers.f -> empty for pypolsys
 #            blah-f2pywrappers2.f90
 # The f90 wrapper is used to handle code which is subdivided into modules. The f wrapper makes subroutines for functions. It rewrites assumed shape arrays as automatic arrays.
+
+# Copy .f2py_f2cmap in buildir (f2py needs it in the working dir)
+fs = import('fs')
+fs.copyfile('.f2py_f2cmap')   
 _polsys_module = custom_target('polsys',
   output: ['polsysmodule.c', 'polsys-f2pywrappers2.f90', 'polsys-f2pywrappers.f'],
   input: 'pypolsys/src/polsys.pyf',
@@ -60,8 +64,27 @@ py.extension_module('polsys', src_files,
 #  fortran_args: ['-fno-range-check', '-ftree-vectorize', '-funroll-all-loops', '-cpp'],
   install: true,
   link_language: 'fortran',
-  native: true
+  native: true,
+  subdir: 'pypolsys'  # Folder relative to site-packages to install to
 )
 
+# Also condier using subdir and split in two meso.build files
+python_sources = [
+    'pypolsys/__init__.py',
+    'pypolsys/test.py',
+    'pypolsys/utils.py',
+    'pypolsys/version.py'
+]
+
+# Install pure Python
+# see https://mesonbuild.com/Python-module.html
+py.install_sources(
+    python_sources,
+    pure: false, # Will be installed next to binaries
+    subdir: 'pypolsys'  # Folder relative to site-packages to install to
+)
+
+# pakage data for wheel
+# README etc... 
 
 
