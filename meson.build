@@ -6,12 +6,13 @@ project('pypolsys', 'c',
 )
 
 add_languages('fortran', native: true)
-
+# load meson python module
 py_mod = import('python')
 py = py_mod.find_installation(pure: false)
 py_dep = py.dependency()
 
 # Get include from numpy and f2py
+# based on https://numpy.org/doc/stable/f2py/buildtools/meson.html 
 incdir_numpy = run_command(py,
   ['-c', 'import os; os.chdir(".."); import numpy; print(numpy.get_include())'],
   check : true
@@ -24,17 +25,14 @@ incdir_f2py = run_command(py,
 
 inc_np = include_directories(incdir_numpy, incdir_f2py)
 
-# Need to add f2py pyf files files
+# Need to call f2py to process pyf files
 # Based on https://numpy.org/doc/stable/f2py/buildtools/meson.html and
 # https://github.com/scipy/scipy/blob/5e986a24f0ab03fbb382ed67ef15895024334481/scipy/io/meson.build#L4
 # From https://numpy.org/doc/stable/f2py/buildtools/index.html
-# For Fortran 90 programs, f2py generates
-#        Input file blah.f90
-#        Generates:
-#            blahmodule.c
-#            blah-f2pywrappers.f -> empty for pypolsys
-#            blah-f2pywrappers2.f90
-# The f90 wrapper is used to handle code which is subdivided into modules. The f wrapper makes subroutines for functions. It rewrites assumed shape arrays as automatic arrays.
+# For Fortran 90 programs, f2py generates for an input file blah.f90
+#  blahmodule.c
+#  blah-f2pywrappers.f, makes subroutines for functions, it rewrites assumed shape arrays as automatic arrays (empty for pypolsys).
+#  blah-f2pywrappers2.f90, handles code which is subdivided into modules
 
 # Copy .f2py_f2cmap in buildir (f2py needs it in the working dir)
 fs = import('fs')
@@ -44,7 +42,7 @@ _polsys_module = custom_target('polsys',
   input: 'pypolsys/src/polsys.pyf',
   command : [py, '-m', 'numpy.f2py', '@INPUT@', '--lower']
 )
-# Pypolsys own src files
+# Pypolsys extension own src files
 src_files = [_polsys_module,
            'pypolsys/801/polsys_plp.f90',
            'pypolsys/src/wrapper.f90']
@@ -61,14 +59,14 @@ py.extension_module('polsys', src_files,
   include_directories: inc_np,
   # No problem if lapack_dep is not found, meson just ignore it
   dependencies : [py_dep, lapack_dep],
-#  fortran_args: ['-fno-range-check', '-ftree-vectorize', '-funroll-all-loops', '-cpp'],
   install: true,
   link_language: 'fortran',
   native: true,
   subdir: 'pypolsys'  # Folder relative to site-packages to install to
 )
 
-# Also condier using subdir and split in two meso.build files
+# Add pure python files
+# Another approach is to split in two meso.build files
 python_sources = [
     'pypolsys/__init__.py',
     'pypolsys/test.py',
@@ -84,7 +82,8 @@ py.install_sources(
     subdir: 'pypolsys'  # Folder relative to site-packages to install to
 )
 
-# pakage data for wheel
-# README etc... 
+# Add package_data used for tests as source files
+install_dir = py.get_install_dir(subdir: 'pypolsys/examples/data')
+install_data('pypolsys/examples/data/toy_model.npz',  install_dir: install_dir) # / 'examples' / 'data'
 
 
