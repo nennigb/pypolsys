@@ -15,22 +15,17 @@ authors = [
 dependencies = [
   "numpy",
   "scipy",
-  "sympy"
+  "sympy",
 ]
 classifiers = [
-  # How mature is this project? Common values are
-  #   3 - Alpha
-  #   4 - Beta
-  #   5 - Production/Stable
+  # How mature is this project?
   "Development Status :: 5 - Production/Stable",
-
   # Indicate who your project is intended for
-  
+  "Topic :: Scientific/Engineering",  
   # Specify the Python versions you support here.
   "Programming Language :: Python :: 3",
   "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
   "Operating System :: OS Independent",
-  "Topic :: Scientific/Engineering",
 ]
 
 [project.urls]
