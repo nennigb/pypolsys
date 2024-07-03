@@ -25,6 +25,12 @@ from scipy.optimize import linear_sum_assignment
 import os
 import sys
 
+# Numpy 2.0 change default printing options making doctest failing.
+# https://numpy.org/neps/nep-0051-scalar-representation.html
+# Use legacy mode for testing
+if np.lib.NumpyVersion(np.__version__) >= '2.0.0b1':
+    np.set_printoptions(legacy="1.25")
+
 
 def sort_ref_found(ref, r):
     """ Sort reference solution and the found solution using
