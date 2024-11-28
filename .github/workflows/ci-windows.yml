@@ -30,7 +30,7 @@ jobs:
           # https://numpy.org/doc/stable/f2py/windows/index.html
           conda install m2w64-toolchain libpython
           # numpy is required for pypolsys building. Better to install it with conda.
-          conda install numpy
+          python -m pip install numpy meson-python>=0.15.0 meson ninja
       - name: Build
         shell: bash -l {0}
         run: |

@@ -36,10 +36,10 @@ inc_np = include_directories(incdir_numpy, incdir_f2py)
 
 # Copy .f2py_f2cmap in buildir (f2py needs it in the working dir)
 fs = import('fs')
-fs.copyfile('.f2py_f2cmap')   
+fs.copyfile('.f2py_f2cmap')
 _polsys_module = custom_target('polsys',
   output: ['polsysmodule.c', 'polsys-f2pywrappers2.f90', 'polsys-f2pywrappers.f'],
-  input: 'pypolsys/src/polsys.pyf',
+  input: ['pypolsys/src/polsys.pyf'],
   command : [py, '-m', 'numpy.f2py', '@INPUT@', '--lower']
 )
 # Pypolsys extension own src files
