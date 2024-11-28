@@ -30,14 +30,12 @@ jobs:
           # https://numpy.org/doc/stable/f2py/windows/index.html
           conda install m2w64-toolchain libpython
           # numpy is required for pypolsys building. Better to install it with conda.
-          # Sometime it fails when installed by pip thought `build-system` requirement from `pyproject.toml` 
-          # Limit setuptools version because of numpy.distutils
-          conda install numpy "setuptools<60.0" wheel
+          conda install numpy
       - name: Build
         shell: bash -l {0}
         run: |
             # Ignore `pyproject.toml` to avoid conda/pip mix in numpy version            
-            python -m pip install -e . --no-use-pep517
+            python -m pip install --no-build-isolation --editable .
             # Show f2py compiler info for debug
             f2py -c --help-fcompiler            
       - name: Test
