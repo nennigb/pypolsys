@@ -19,7 +19,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@main
         with:
           activate-environment: polsys_env
-          python-version: 3.11
+          python-version: 3.12
           auto-activate-base: false
           miniconda-version: "latest"
           auto-update-conda: true
@@ -29,17 +29,15 @@ jobs:
           # Use conda to manage the building toolchain, but is now outdated
           # https://numpy.org/doc/stable/f2py/windows/index.html
           conda install m2w64-toolchain libpython
-          # numpy is required for pypolsys building. Better to install it with conda.
-          python -m pip install numpy meson-python>=0.15.0 meson ninja
       - name: Build
         shell: bash -l {0}
         run: |
             # Ignore `pyproject.toml` to avoid conda/pip mix in numpy version            
-            python -m pip install --no-build-isolation --editable .
-            # Show f2py compiler info for debug
-            f2py -c --help-fcompiler            
+            python -m pip install -v .  
       - name: Test
         shell: bash -l {0}
         run: |
+            # force to use the installed package and not the one from the local repo.
+            rm pypolsys/__init__.py
             python -m pypolsys.test
 
