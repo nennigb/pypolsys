@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.11', '3.12', '3.13']
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - uses: actions/checkout@main
@@ -37,6 +37,6 @@ jobs:
         python -m pip install -v .
     - name: Run tests
       run: |
-        # force to use the installed package and not the one from the local repo.
+        # Force to use the installed package and not the one from the local repo.
         rm pypolsys/__init__.py
         python -m pypolsys.test
