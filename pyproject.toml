@@ -8,7 +8,7 @@ dynamic = ["version"]
 description = "A python wrapper to `POLSYS_PLP` fortran90 package from Layne T. Watson, Steven M. Wise, Andrew J. Sommese, August, 1998."
 readme = 'README.md'
 license = {file = 'LICENSE'}
-requires-python = '>=3.5'
+requires-python = '>=3.8'
 authors = [
   {name = "B. Nennig", email = 'benoit.nennig@isae-supmeca.fr'},
 ]

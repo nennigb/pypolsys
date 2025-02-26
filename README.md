@@ -37,7 +37,7 @@ To facilitate the build of this module, a copy of `POLSYS_PLP` *original* source
 ## Installation
 
 You'll need :
-  * python (tested for v >= 3.5);
+  * python (tested for v >= 3.8);
   * pip (optional);
   * fortran compiler (tested with `gfortran` and with `m2w64-toolchain` on windows)
   * lapack and blas installation (only on linux). The useful lapack/blas routines are also shipped with `POLSYS_PLP` sources and built by default on Window or on demand on linux (see below). Optimized library are preferred and often already present on linux systems. If not, library like `openblas` and the required development files can be installed with `sudo apt install libopenblas-dev` on debian based distribution (including ubuntu).
