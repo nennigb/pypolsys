@@ -37,48 +37,37 @@ To facilitate the build of this module, a copy of `POLSYS_PLP` *original* source
 ## Installation
 
 You'll need :
-  * python (tested for v >= 3.5);
+  * python (tested for v >= 3.8);
   * pip (optional);
   * fortran compiler (tested with `gfortran` and with `m2w64-toolchain` on windows)
   * lapack and blas installation (only on linux). The useful lapack/blas routines are also shipped with `POLSYS_PLP` sources and built by default on Window or on demand on linux (see below). Optimized library are preferred and often already present on linux systems. If not, library like `openblas` and the required development files can be installed with `sudo apt install libopenblas-dev` on debian based distribution (including ubuntu).
 
-If needed, please see the steps given in the continuous integration script [workflows](.github/workflows/ci-ubuntu.yml).
+If needed, please see the steps given in the continuous integration scripts [ci-ubuntu](.github/workflows/ci-ubuntu.yml) or [ci-windows](.github/workflows/ci-windows.yml). 
 
-### Using pip (preferred)
+### Using pip
 You can install `pypolsys` from pip:
 ```
 pip install pypolsys [--user]
 ```
-You can also install `pypolsys` after a download from github:
+You can also install `pypolsys` after a download from github or after cloning the repos:
 ```
 pip install path/to/pypolsys-version.tar.gz [--user]
 ```
-or in _editable_ mode if you want to modify the sources
+Installation can be done _editable_ mode if you want to modify the sources:
 ```
-pip install -e path/to/pypolsys
+python -m pip install --no-build-isolation --editable .
 ```
-after cloning the repos.
-
-`pip` will install `numpy` (mandatory) and `sympy` and `scipy` (optional, required only for tests).
-
-Note that on ubuntu, you will need to use `pip3` instead of `pip` and `python3` instead of `python`.
-
-On linux, if you want to force the building with `POLSYS_PLP` lapack sources, you can tell it to pip with
-```
-pip install --no-use-pep517 --install-option="--buildLapack" path/to/pypolsys
-```
-The flag `--no-use-pep517` avoids side effect of `install-option` that disable wheels.
-Using `POLSYS_PLP` lapack sources is the standard behavior on windows.
-
-### Troubleshooting
-With old `gfortran` version present on ubuntu 16.04 (see [here](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84276)) the building may failed. To avoid this, `intent(in, out)` statement has to be removed from the original `pypolsys/801/polsys_plp.f90`. It seems to work out of the box with `gfortan-8`.
+In this case, compatible version of meson, meson-python and ninja have to be installed before (see `pyproject.toml` file).
 
 ### Running tests
-
 To execute the full test suite, run :
 ```
 python -m pypolsys.test
 ```
+
+### Troubleshooting
+With old `gfortran` version present on ubuntu 16.04 (see [here](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84276)) the building may failed. To avoid this, `intent(in, out)` statement has to be removed from the original `pypolsys/801/polsys_plp.f90`. It seems to work out of the box with `gfortan-8`.
+
 
 ## Usage
 Note that this projet is a work in progress and the API may change.
@@ -204,9 +193,10 @@ Before submitting a PR, run the tests suite ;-)
 If you need to modify `wrapper.f90` fortran source file. You will need to re-build the Fortran extension. This should be done into 2 steps
   1. The pyf file that avoid trouble with user_defined fortran type should be updated with `f2py` utilities :
 
-    ```
-    f2py -m polsys -h polsys.pyf wrapper.f90 --overwrite-signature
-    ```
+     ```
+     f2py -m polsys -h polsys.pyf wrapper.f90 --overwrite-signature
+     ```
+
   2. Re run the install
 
 

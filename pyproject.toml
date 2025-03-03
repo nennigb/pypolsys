@@ -1,2 +1,33 @@
 [build-system]
-requires=['setuptools<60.0', 'wheel', 'numpy']
+build-backend = 'mesonpy'
+requires = ['meson-python>=0.15.0', 'cython', 'numpy']
+
+[project]
+name = 'pypolsys'
+dynamic = ["version"]
+description = "A python wrapper to `POLSYS_PLP` fortran90 package from Layne T. Watson, Steven M. Wise, Andrew J. Sommese, August, 1998."
+readme = 'README.md'
+license = {file = 'LICENSE'}
+requires-python = '>=3.8'
+authors = [
+  {name = "B. Nennig", email = 'benoit.nennig@isae-supmeca.fr'},
+]
+dependencies = [
+  "numpy",
+  "scipy",
+  "sympy",
+]
+classifiers = [
+  # How mature is this project?
+  "Development Status :: 5 - Production/Stable",
+  # Indicate who your project is intended for
+  "Topic :: Scientific/Engineering",  
+  # Specify the Python versions you support here.
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Operating System :: OS Independent",
+]
+
+[project.urls]
+homepage = "https://github.com/nennigb/pypolsys"
+
