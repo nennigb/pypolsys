@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         # macos-13 is an intel runner, macos-14 is apple silicon
-        os: [ubuntu-latest, windows-latest] # ubuntu-24.04-arm, macos-13, macos-14
+        os: [windows-latest] # ubuntu-24.04-arm, macos-13, macos-14, ubuntu-latest,
         #python: [cp38, cp39, cp310, cp311, cp312, cp313]  # <---- is it usefull ??
     steps:
       - uses: actions/checkout@main
@@ -54,9 +54,9 @@ jobs:
         uses: pypa/cibuildwheel@v2.12.0
         env:
           CIBW_SKIP: pp* *-musllinux* *-win32
-          CIBW_ARCHS_WINDOWS: auto64
+#          CIBW_ARCHS_WINDOWS: auto64
 #          CIBW_ARCHS_MACOS: x86_64
-          CIBW_ENVIRONMENT_WINDOWS: CC=gcc CXX=g++ FC=gfortran          
+#          CIBW_ENVIRONMENT_WINDOWS: CC=gcc CXX=g++ FC=gfortran          
 #          CIBW_BUILD: ${{ matrix.python }}-* 
 #          CIBW_SKIP: "*-win32 *i686 *musllinux*"
 
