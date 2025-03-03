@@ -1,0 +1,109 @@
+name: Build wheels and sdist
+
+on: [push]
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}-${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        # macos-13 is an intel runner, macos-14 is apple silicon
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-13, macos-14]
+        #python: [cp38, cp39, cp310, cp311, cp312, cp313]  # <---- is it usefull ??
+    steps:
+      - uses: actions/checkout@main
+
+      # Used to host cibuildwheel
+      - uses: actions/setup-python@main
+        with:
+          python-version: "3.x"
+      - name: Provide OpenBLAS on linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get install libopenblas-dev
+#      - name: Provide gfortran (macOS)
+#        if: runner.os == 'macOS'
+#        run: |
+#          # https://github.com/actions/virtual-environments/issues/2524
+#          # https://github.com/cbg-ethz/dce/blob/master/.github/workflows/pkgdown.yaml
+#          sudo ln -s /usr/local/bin/gfortran-11 /usr/local/bin/gfortran
+#          sudo mkdir /usr/local/gfortran
+#          sudo ln -s /usr/local/Cellar/gcc@11/*/lib/gcc/11 /usr/local/gfortran/lib
+#          gfortran --version
+      - name: Provide gfortran (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@main
+#      - name: Tell distutils to use mingw (Windows)
+#        if: runner.os == 'Windows'
+#        run: |
+#          echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.12.0
+#        env:
+#          CIBW_BUILD: ${{ matrix.python }}-* 
+#          CIBW_SKIP: "*-win32 *i686 *musllinux*"
+
+      - uses: actions/upload-artifact@main
+        with:
+          name: ${{ matrix.python }}-${{ matrix.os }} 
+          path: ./wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+
+      - name: Build sdist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@main
+        with:
+          name: SDist 
+          path: dist/*.tar.gz
+#  release:
+#    name: Release wheels and sdist
+#    # Edit here if compiling multiple papers
+#    needs: [build_wheels, build_sdist]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      - uses: actions/download-artifact@v3
+#        with:
+#          path: build
+#      - name: move
+#        run: |
+#             mkdir -p github_deploy && mv build/*/* github_deploy && ls -l github_deploy
+#      - name: Release
+#        uses: softprops/action-gh-release@v1
+#        if: startsWith(github.ref, 'refs/tags/')
+#        with:
+#          # tag_name: SILEXlight-${{ github.event.release.tag_name }}
+#          name: SILEXlight release ${{ github.event.release.tag_name }}
+#          prerelease: false
+#          files: github_deploy/*
+
+  # upload_pypi:
+  #   needs: [build_wheels, build_sdist]
+  #   runs-on: ubuntu-latest
+  #   # upload to PyPI on every tag starting with 'v'
+  #   if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+  #   # alternatively, to publish when a GitHub Release is created, use the following rule:
+  #   # if: github.event_name == 'release' && github.event.action == 'published'
+  #   steps:
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         # unpacks default artifact into dist/
+  #         # if `name: artifact` is omitted, the action will create extra parent dir
+  #         name: artifact
+  #         path: dist
+
+  #     - uses: pypa/gh-action-pypi-publish@v1.5.0
+  #       with:
+  #         user: __token__
+  #         password: ${{ secrets.pypi_password }}
+  #         # To test: repository_url: https://test.pypi.org/legacy/
