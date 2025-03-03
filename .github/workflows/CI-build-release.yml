@@ -51,10 +51,10 @@ jobs:
 #          CIBW_ENVIRONMENT_MACOS: CC=clang CXX=clang++ FC=gfortran-11
           
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.12.0
+        uses: pypa/cibuildwheel@main
         env:
           CIBW_SKIP: pp* *-musllinux* *-win32
-#          CIBW_ARCHS_WINDOWS: auto64
+          CIBW_ARCHS_WINDOWS: auto64
 #          CIBW_ARCHS_MACOS: x86_64
 #          CIBW_ENVIRONMENT_WINDOWS: CC=gcc CXX=g++ FC=gfortran          
 #          CIBW_BUILD: ${{ matrix.python }}-* 
