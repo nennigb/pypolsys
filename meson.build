@@ -66,16 +66,20 @@ src_files = [
 
 # Look for lapack only on linux
 # Check  the operating system the code is runnig (will failed for cross compilation=)
-if target_machine.system() == 'linux'
+if host_machine.system() == 'linux'
   lapack_dep = dependency('lapack', required: false)
   if not lapack_dep.found()
       # Need to compile lapack too
       src_files += 'pypolsys/801/lapack_plp.f'
+      deps = [py_dep]
+  else
+      deps = [py_dep, lapack_dep]    
   endif
 else
   lapack_dep = disabler()
   # Need to compile lapack too
   src_files += 'pypolsys/801/lapack_plp.f'
+  deps = [py_dep]
 endif
 
 # Assumes that f2py was run before in _polsys_module
@@ -85,7 +89,7 @@ py.extension_module(
     incdir_f2py / 'fortranobject.c',
     include_directories: inc_np,
     # No problem if lapack_dep is not found, meson just ignore it
-    dependencies: [py_dep, lapack_dep],
+    dependencies: deps,
     install: true,
     link_language: 'fortran',
     native: true,
