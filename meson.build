@@ -66,7 +66,7 @@ src_files = [
 
 # Look for lapack only on linux
 # Check  the operating system the code is runnig (will failed for cross compilation=)
-if target_machine.system() == 'linux':
+if target_machine.system() == 'linux'
   lapack_dep = dependency('lapack', required: false)
   if not lapack_dep.found()
       # Need to compile lapack too
