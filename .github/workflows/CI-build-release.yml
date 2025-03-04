@@ -36,7 +36,6 @@ jobs:
           sudo ln -s /usr/local/Cellar/gcc@13/*/lib/gcc/13 /usr/local/gfortran/lib
           gfortran --version
           gcc --version
-          ldd libacc
       - name: Build wheels (Windows)
         if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
