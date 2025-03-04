@@ -29,14 +29,14 @@ jobs:
           # https://github.com/actions/virtual-environments/issues/2524
           # https://github.com/cbg-ethz/dce/blob/master/.github/workflows/pkgdown.yaml
           sudo ln -s /usr/local/bin/gfortran-13 /usr/local/bin/gfortran
-          sudo ln -s /opt/homebrew/bin/gcc-13 /usr/local/bin/gcc
-          sudo ln -s /opt/homebrew/bin/g++-13 /usr/local/bin/g++          
+          sudo ln -s //usr/local/bin/gcc-13 /usr/local/bin/gcc
+          sudo ln -s /usr/local/bin/g++-13 /usr/local/bin/g++          
           
           sudo mkdir /usr/local/gfortran
           sudo ln -s /usr/local/Cellar/gcc@13/*/lib/gcc/14 /usr/local/gfortran/lib
           gfortran --version
           gcc --version
-          ls - lrt /usr/local/gfortran/lib
+          ls -lrt /usr/local/gfortran/lib
       - name: Build wheels (Windows)
         if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
