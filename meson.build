@@ -72,11 +72,11 @@ if target_machine.system() == 'linux'
       # Need to compile lapack too
       src_files += 'pypolsys/801/lapack_plp.f'
   endif
-else:
+else
   lapack_dep = disabler()
   # Need to compile lapack too
   src_files += 'pypolsys/801/lapack_plp.f'
-
+endif
 
 # Assumes that f2py was run before in _polsys_module
 py.extension_module(
