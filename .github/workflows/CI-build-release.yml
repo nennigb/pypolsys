@@ -67,7 +67,7 @@ jobs:
           CIBW_SKIP: pp* *-musllinux* *-win32
           CIBW_ARCHS_WINDOWS: auto64
           CIBW_ARCHS_MACOS: x86_64
-          CIBW_ENVIRONMENT: "MACOSX_DEPLOYMENT_TARGET=10.15"          
+          CIBW_ENVIRONMENT: "MACOSX_DEPLOYMENT_TARGET=13.0"          
 #          CIBW_ENVIRONMENT_WINDOWS: CC=gcc CXX=g++ FC=gfortran          
 #          CIBW_BUILD: ${{ matrix.python }}-* 
 #          CIBW_SKIP: "*-win32 *i686 *musllinux*"
