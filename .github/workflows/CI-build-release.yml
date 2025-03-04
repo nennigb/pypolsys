@@ -37,6 +37,7 @@ jobs:
           gfortran --version
           gcc --version
           ls -lrt /usr/local/gfortran/lib
+          locate libgcc_s
       - name: Build wheels (Windows)
         if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
