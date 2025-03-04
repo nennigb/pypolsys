@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         # macos-13 is an intel runner, macos-14 is apple silicon
-        os: [windows-latest, macos-13] # ubuntu-24.04-arm, macos-13, macos-14, ubuntu-latest,
+        os: [macos-13] # ubuntu-24.04-arm, macos-13, macos-14, ubuntu-latest, windows-latest
         #python: [cp38, cp39, cp310, cp311, cp312, cp313]  # <---- is it usefull ??
     steps:
       - uses: actions/checkout@main
@@ -46,6 +46,11 @@ jobs:
           path-type: inherit
           install: >-
             mingw-w64-x86_64-gcc-fortran
+      - name: Test if the package can be install on MacOS
+        if: runner.os == 'macOS'
+        run: |
+          # https://mesonbuild.com/meson-python/how-to-guides/editable-installs.html
+          python -m pip install -v .            
 
 #      - name: Build wheels
 #        run: |
