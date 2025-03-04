@@ -63,12 +63,20 @@ src_files = [
     'pypolsys/801/polsys_plp.f90',
     'pypolsys/src/wrapper.f90',
 ]
-# Lapack
-lapack_dep = dependency('lapackweird', required: false)
-if not lapack_dep.found()
-    # Need to compile lapack too
-    src_files += 'pypolsys/801/lapack_plp.f'
-endif
+
+# Look for lapack only on linux
+# Check  the operating system the code is runnig (will failed for cross compilation=)
+if target_machine.system() == 'linux':
+  lapack_dep = dependency('lapack', required: false)
+  if not lapack_dep.found()
+      # Need to compile lapack too
+      src_files += 'pypolsys/801/lapack_plp.f'
+  endif
+else:
+  lapack_dep = disabler()
+  # Need to compile lapack too
+  src_files += 'pypolsys/801/lapack_plp.f'
+
 
 # Assumes that f2py was run before in _polsys_module
 py.extension_module(
