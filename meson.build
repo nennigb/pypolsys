@@ -64,7 +64,7 @@ src_files = [
     'pypolsys/src/wrapper.f90',
 ]
 # Lapack
-lapack_dep = dependency('lapack', required: false)
+lapack_dep = dependency('lapackweird', required: false)
 if not lapack_dep.found()
     # Need to compile lapack too
     src_files += 'pypolsys/801/lapack_plp.f'
