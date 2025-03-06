@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         # macos-13 is an intel runner, macos-14 is apple silicon
-        os: [ubuntu-latest, windows-latest, macos-13] # ubuntu-24.04-arm, macos-13, macos-14, ubuntu-latest, windows-latest
+        os: [ubuntu-latest] # ubuntu-24.04-arm, macos-13, macos-14, ubuntu-latest, windows-latest, macos-13 windows-latest
         #python: [cp38, cp39, cp310, cp311, cp312, cp313]  # <---- is it usefull ??
     steps:
       - uses: actions/checkout@main
@@ -71,7 +71,8 @@ jobs:
 #          CIBW_ENVIRONMENT_WINDOWS: CC=gcc CXX=g++ FC=gfortran          
 #          CIBW_BUILD: ${{ matrix.python }}-* 
 #          CIBW_SKIP: "*-win32 *i686 *musllinux*"
-          # CIBW_TEST_COMMAND: "python -m pypolsys.test"
+          CIBW_BEFORE_TEST: pip install pytest
+          CIBW_TEST_COMMAND: "pytest --pyargs pypolsys.test -v"
           CIBW_BUILD_VERBOSITY: 1
       - uses: actions/upload-artifact@main
         with:
