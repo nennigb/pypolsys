@@ -71,7 +71,7 @@ jobs:
 #          CIBW_ENVIRONMENT_WINDOWS: CC=gcc CXX=g++ FC=gfortran          
 #          CIBW_BUILD: ${{ matrix.python }}-* 
 #          CIBW_SKIP: "*-win32 *i686 *musllinux*"
-          CIBW_TEST_COMMAND: "python -m pypolsys.test"
+          CIBW_TEST_COMMAND: python {package}/test.py
           CIBW_BUILD_VERBOSITY: 1
       - uses: actions/upload-artifact@main
         with:
