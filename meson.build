@@ -67,7 +67,7 @@ src_files = [
 # Look for lapack only on linux
 # Check  the operating system the code is runnig (will failed for cross compilation=)
 if host_machine.system() == 'linux'
-  lapack_dep = dependency('lapack', required: false)
+  lapack_dep = dependency('openblas', required: false)
   if not lapack_dep.found()
       # Need to compile lapack too
       src_files += 'pypolsys/801/lapack_plp.f'
@@ -116,5 +116,9 @@ py.install_sources(
 # Add package_data used for tests as source files
 install_dir = py.get_install_dir(subdir: 'pypolsys/examples/data')
 install_data('pypolsys/examples/data/toy_model.npz', install_dir: install_dir)  # / 'examples' / 'data'
+
+
+
+
 
 
