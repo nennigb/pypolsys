@@ -64,7 +64,7 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@main
         env:
-          CIBW_BEFORE_ALL_LINUX: 'apt-get install libopenblas-dev'
+          CIBW_BEFORE_ALL_LINUX: 'apt install libopenblas-dev'
           CIBW_SKIP: pp* *-musllinux* *-win32 *i686 cp38* cp39* cp310*
           CIBW_ARCHS_WINDOWS: auto64
           #CIBW_ARCHS_MACOS: x86_64
