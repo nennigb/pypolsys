@@ -67,7 +67,7 @@ src_files = [
 # Look for lapack only on linux
 # Check  the operating system the code is runnig (will failed for cross compilation=)
 if host_machine.system() == 'linux'
-  lapack_dep = dependency('openblas', required: false)
+  lapack_dep = dependency('lapack', required: false)
   if not lapack_dep.found()
       # Need to compile lapack too
       src_files += 'pypolsys/801/lapack_plp.f'
