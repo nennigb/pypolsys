@@ -36,28 +36,40 @@ To facilitate the build of this module, a copy of `POLSYS_PLP` *original* source
 
 ## Installation
 
-You'll need :
-  * python (tested for v >= 3.8);
-  * pip (optional);
-  * fortran compiler (tested with `gfortran` and with `m2w64-toolchain` on windows)
-  * lapack and blas installation (only on linux). The useful lapack/blas routines are also shipped with `POLSYS_PLP` sources and built by default on Window or on demand on linux (see below). Optimized library are preferred and often already present on linux systems. If not, library like `openblas` and the required development files can be installed with `sudo apt install libopenblas-dev` on debian based distribution (including ubuntu).
-
-If needed, please see the steps given in the continuous integration scripts [ci-ubuntu](.github/workflows/ci-ubuntu.yml) or [ci-windows](.github/workflows/ci-windows.yml). 
-
-### Using pip
+### From the wheel
+The easiest way to install `pypolsys` is to use the wheel available on pypi. Wheels are availlable for the most usual 64 bits architectures and os (Linux, Windows, Macos).
 You can install `pypolsys` from pip:
 ```
 pip install pypolsys [--user]
 ```
-You can also install `pypolsys` after a download from github or after cloning the repos:
+you can also use a virtual environnement for better isolation.
+
+### From the source
+If wheels are not available or if you need to modify the code or the last developpement version, you need to build `pypolsys` from the source. The sources are available on pypi or on the github [repos](https://github.com/nennigb/pypolsys/).
+
+You'll need :
+  * python (tested for v >= 3.10);
+  * pip;
+  * fortran compiler (tested with `gfortran` on linux and macos, with `m2w64-toolchain` on windows with conda or with `rtools` distribution of `mingw64`);
+  * lapack and blas installation (only on linux), optional. The useful lapack/blas routines are also shipped with `POLSYS_PLP` sources and built by default on Window or on demand on linux (see below). Optimized library are preferred and often already present on linux systems. If not, library like `openblas` and the required development files can be installed with `sudo apt install libopenblas-dev` on debian based distribution (including ubuntu).
+
+After, just use
 ```
-pip install path/to/pypolsys-version.tar.gz [--user]
+pip install pypolsys [--user]
 ```
-Installation can be done _editable_ mode if you want to modify the sources:
+it will download the source from pypi and build `pypolsys`.
+If you manualy get the sources, in the `pypolsys` source folder (where there is the `meson.build` file), run
 ```
-python -m pip install --no-build-isolation --editable .
+pip install .
 ```
-In this case, compatible version of meson, meson-python and ninja have to be installed before (see `pyproject.toml` file).
+or,
+```
+pip install -v --no-build-isolation --editable .
+```
+to install it in editable mode.
+
+If needed, please see the steps given in the continuous integration scripts [ci-ubuntu](.github/workflows/ci-ubuntu.yml), [ci-windows](.github/workflows/ci-windows.yml) or [CI-build-release.yml](.github/workflows/CI-build-release.yml).
+
 
 ### Running tests
 To execute the full test suite, run :
@@ -67,7 +79,6 @@ python -m pypolsys.test
 
 ### Troubleshooting
 With old `gfortran` version present on ubuntu 16.04 (see [here](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84276)) the building may failed. To avoid this, `intent(in, out)` statement has to be removed from the original `pypolsys/801/polsys_plp.f90`. It seems to work out of the box with `gfortan-8`.
-
 
 ## Usage
 Note that this projet is a work in progress and the API may change.
@@ -92,7 +103,7 @@ n_coef_per_eq = np.array([4, 4, 4], dtype=np.int32)
 # Provide the coefficients as 1D array
 all_coef = np.array([1, 1,  1, -1,
                      1, 1,  1, -1,
-                     1, 1,  1, -1], dtype=np.complex)
+                     1, 1,  1, -1], dtype=complex)
 # then the degree of each monom
 all_deg = np.zeros((np.sum(n_coef_per_eq), N), dtype=np.int32)
 all_deg[0, 0] = 2
@@ -204,4 +215,4 @@ If you need to modify `wrapper.f90` fortran source file. You will need to re-bui
 This file is part of pypolsys, a simple python wrapper to fortran package polsys_plp.
 pypolsys is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 pypolsys is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License along with amc2moodle.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License along with pypolsys.  If not, see <https://www.gnu.org/licenses/>.
