@@ -1,12 +1,15 @@
-name: Build wheels and sdist
+name: Publish Python 🐍 distribution 📦 to PyPI and create a github release
 
-on: [push]
+on:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}-${{ matrix.python }}
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
+    continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
@@ -45,6 +48,7 @@ jobs:
           name: wheel-${{ matrix.os }} 
           path: ./wheelhouse/*.whl
 
+
   build_sdist:
     name: Build source distribution
     runs-on: ubuntu-latest
@@ -52,55 +56,90 @@ jobs:
       - uses: actions/checkout@main
 
       - name: Build sdist
-        run: pipx run build --sdist
+        run: pipx run build --sdist -o wheelhouse
 
       - uses: actions/upload-artifact@main
         with:
-          name: sourcedist 
-          path: dist/*.tar.gz
+          name: sdist
+          path: wheelhouse/*.tar.gz
 
 
-#  release:
-#    name: Release wheels and sdist
-#    # Edit here if compiling multiple papers
-#    needs: [build_wheels, build_sdist]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#      - uses: actions/download-artifact@v3
-#        with:
-#          path: build
-#      - name: move
-#        run: |
-#             mkdir -p github_deploy && mv build/*/* github_deploy && ls -l github_deploy
-#      - name: Release
-#        uses: softprops/action-gh-release@v1
-#        if: startsWith(github.ref, 'refs/tags/')
-#        with:
-#          # tag_name: SILEXlight-${{ github.event.release.tag_name }}
-#          name: SILEXlight release ${{ github.event.release.tag_name }}
-#          prerelease: false
-#          files: github_deploy/*
+  check_tag:
+    name: Check tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if head branch has a valid version tag
+        uses: actions-ecosystem/action-regex-match@v2
+        id: regex-match
+        with:
+          text: ${{ github.ref_name }}
+          regex: '^v[0-9]+.[0-9]+.[0-9]+'  # should we add final letters like 'beta'    
 
-  # upload_pypi:
-  #   needs: [build_wheels, build_sdist]
-  #   runs-on: ubuntu-latest
-  #   # upload to PyPI on every tag starting with 'v'
-  #   if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-  #   # alternatively, to publish when a GitHub Release is created, use the following rule:
-  #   # if: github.event_name == 'release' && github.event.action == 'published'
-  #   steps:
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         # unpacks default artifact into dist/
-  #         # if `name: artifact` is omitted, the action will create extra parent dir
-  #         name: artifact
-  #         path: dist
+      - uses: actions/checkout@main
 
-  #     - uses: pypa/gh-action-pypi-publish@v1.5.0
-  #       with:
-  #         user: __token__
-  #         password: ${{ secrets.pypi_password }}
-  #         # To test: repository_url: https://test.pypi.org/legacy/
+      - name: Compare the tag and the package version
+        env: 
+          MATCH: ${{ steps.regex-match.outputs.match }}
+        run: |
+          echo "trig on push with:" ${{ github.ref }}  # when trig on tag, contains the tag
+          echo "full branch name": ${{ github.ref_name }}
+          echo "package tag:" $(python pypolsys/version.py)
+          echo "matched git tag:" $MATCH
+          if [[ v$(python pypolsys/version.py) == $MATCH ]]; then   # In version.py no 'v' prefix
+            echo "tags are identical, continue..."
+            exit 0;
+          else 
+            echo "tags are different. Stop."
+            exit 1;
+          fi
+
+         
+  publish-to-pypi:
+    name: >-
+      Publish Python 🐍 distribution 📦 to PyPI
+    needs: [build_wheels, build_sdist, check_tag]
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pypolsys  # Replace <package-name> with your PyPI project name
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+    - name: Download all the build artifacts
+      uses: actions/download-artifact@main
+      with:
+        path: wheelhouse/
+    - name: Collect all wheels in the same path
+      run: |
+        ls -Rlrt wheelhouse
+        mkdir wheelhouse/all
+        mv -f wheelhouse/*/* wheelhouse/all/
+        echo "All the available wheels are:"
+        ls -lrt wheelhouse/all        
+    - name: Publish distribution 📦 to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1     
+      with:
+        packages-dir: wheelhouse/all
+
+
+  github-release:
+    name: Create a GitHub Release
+    needs: [build_wheels, build_sdist, check_tag]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # IMPORTANT: mandatory for making GitHub Releases
+      id-token: write  # IMPORTANT: mandatory for sigstore
+
+    steps:
+    - name: Create GitHub Release
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: >-
+        gh release create        
+        '${{ github.ref_name }}'
+        --repo '${{ github.repository }}'
+        --generate-notes
+        --title 'pypolsys ${{ github.ref_name }}'                   
 
