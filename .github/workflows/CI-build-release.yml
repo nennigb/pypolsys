@@ -125,7 +125,7 @@ jobs:
 
   github-release:
     name: Create a GitHub Release
-    needs: [build_wheels, build_sdist, check_tag]
+    needs: publish-to-pypi
     runs-on: ubuntu-latest
 
     permissions:
